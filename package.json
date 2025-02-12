@@ -4,7 +4,6 @@
   "author": "Dylan Dover <dylan@dylandover.dev> (http://dylandover.dev/)",
   "private": true,
   "scripts": {
-    "prebuild": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
