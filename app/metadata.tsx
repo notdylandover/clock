@@ -5,7 +5,7 @@ const defaultDescription = "It's just a clock.";
 const defaultUrl = "https://clock.dylandover.dev";
 
 export const viewport: Viewport = {
-    themeColor: 'white',
+    themeColor: 'dark',
 };
 
 export const metadata: Metadata = {

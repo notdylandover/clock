@@ -46,11 +46,11 @@ export default function Clock() {
     }, [timezone]);
 
     return (
-        <div>
+        <div className="flex grow items-center justify-center">
             {error ? (
                 <p>{error}</p>
             ) : (
-                <p className="SevenSegment text-5xl sm:text-7xl md:text-9xl">
+                <p className="SevenSegment text-5xl sm:text-6xl md:text-8xl">
                     {time ? time.toLocaleTimeString() : ""}
                 </p>
             )}

@@ -1,9 +1,5 @@
-import Clock from '@/app/components/Clock';
+import Content from "@/app/components/Content";
 
 export default function Page() {
-    return (
-        <div className="flex items-center justify-center h-screen">
-            <Clock />
-        </div>
-    );
+    return <Content />;
 }
