@@ -50,7 +50,7 @@ export default function Clock() {
             {error ? (
                 <p>{error}</p>
             ) : (
-                <p className="font-[Inter] text-7xl">
+                <p className="SevenSegment text-5xl sm:text-7xl md:text-9xl">
                     {time ? time.toLocaleTimeString() : ""}
                 </p>
             )}

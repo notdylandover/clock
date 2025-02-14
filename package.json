@@ -1,5 +1,6 @@
 {
-  "name": "portfolio-website",
+  "name": "clock",
+  "description": "It's just a clock.",
   "homepage": "https://dylandover.dev",
   "author": "Dylan Dover <dylan@dylandover.dev> (http://dylandover.dev/)",
   "private": true,

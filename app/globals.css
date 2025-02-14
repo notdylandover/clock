@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: "Seven Segment";
+    src: url(/fonts/SevenSegment.ttf);
+}
+
 html {
     font-family: "Inter", serif;
+}
+
+.SevenSegment {
+    font-family: "Seven Segment", serif;
 }
