@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navigation from "@/app/components/Navigation";
 import Clock from "@/app/components/Clock";
@@ -9,14 +9,30 @@ import Stopwatch from "@/app/components/Stopwatch";
 export default function Content() {
     const [selectedTab, setSelectedTab] = useState("clock");
     const [showNavigation, setShowNavigation] = useState(true);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
-        const handleKeyDown = (_: KeyboardEvent) => {
+        const resetTimer = () => {
             setShowNavigation(true);
+            if (timerRef.current) clearTimeout(timerRef.current);
+            timerRef.current = setTimeout(() => {
+                setShowNavigation(false);
+            }, 10000);
         };
-    
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
+
+        const events = ["keydown", "mousemove"];
+        events.forEach((eventName) => {
+            window.addEventListener(eventName, resetTimer);
+        });
+
+        resetTimer();
+
+        return () => {
+            events.forEach((eventName) => {
+                window.removeEventListener(eventName, resetTimer);
+            });
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
     }, []);
 
     return (
@@ -30,10 +46,10 @@ export default function Content() {
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
                     >
-                        <Navigation 
-                            selected={selectedTab} 
-                            onSelect={setSelectedTab} 
-                            onHide={() => setShowNavigation(false)} 
+                        <Navigation
+                            selected={selectedTab}
+                            onSelect={setSelectedTab}
+                            onHide={() => setShowNavigation(false)}
                         />
                     </motion.div>
                 )}
