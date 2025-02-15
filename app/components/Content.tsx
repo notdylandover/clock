@@ -9,10 +9,25 @@ import Stopwatch from "@/app/components/Stopwatch";
 export default function Content() {
     const [selectedTab, setSelectedTab] = useState("clock");
     const [showNavigation, setShowNavigation] = useState(true);
+    const [manualHide, setManualHide] = useState(false);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
-        const resetTimer = () => {
+        const resetTimer = (event?: Event) => {
+            if (event && event.type === "keydown") {
+                const keyEvent = event as KeyboardEvent;
+                if (keyEvent.key === "Escape") {
+                    setManualHide(false);
+                    setShowNavigation(true);
+                    if (timerRef.current) clearTimeout(timerRef.current);
+                    timerRef.current = setTimeout(() => {
+                        setShowNavigation(false);
+                    }, 10000);
+                    return;
+                }
+            }
+
+            if (manualHide) return;
             setShowNavigation(true);
             if (timerRef.current) clearTimeout(timerRef.current);
             timerRef.current = setTimeout(() => {
@@ -33,7 +48,18 @@ export default function Content() {
             });
             if (timerRef.current) clearTimeout(timerRef.current);
         };
-    }, []);
+    }, [manualHide]);
+
+    useEffect(() => {
+        if (!showNavigation) {
+            document.body.style.cursor = "none";
+        } else {
+            document.body.style.cursor = "default";
+        }
+        return () => {
+            document.body.style.cursor = "default";
+        };
+    }, [showNavigation]);
 
     return (
         <div className="flex flex-col h-screen w-screen p-4">
@@ -48,12 +74,19 @@ export default function Content() {
                     >
                         <Navigation
                             selected={selectedTab}
-                            onSelect={setSelectedTab}
-                            onHide={() => setShowNavigation(false)}
+                            onSelect={(tab) => {
+                                setManualHide(false);
+                                setSelectedTab(tab);
+                            }}
+                            onHide={() => {
+                                setManualHide(true);
+                                setShowNavigation(false);
+                            }}
                         />
                     </motion.div>
                 )}
             </AnimatePresence>
+
             <div className="flex-grow flex items-center justify-center">
                 <AnimatePresence mode="wait">
                     {selectedTab === "clock" && (

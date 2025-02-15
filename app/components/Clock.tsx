@@ -7,22 +7,38 @@ export default function Clock() {
     const [time, setTime] = useState<Date | null>(null);
     const [error, setError] = useState<string>("");
 
-    const fetchTime = () => {
-        const url = `https://worldtimeapi.org/api/timezone/${timezone}`;
-        fetch(url)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch time");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setTime(new Date(data.datetime));
-            })
-            .catch((err) => {
-                console.error(err);
-                setError("Unable to retrieve time");
-            });
+    const fetchTime = async () => {
+        const primaryUrl = `https://worldtimeapi.org/api/timezone/${timezone}`;
+        try {
+            const response = await fetch(primaryUrl);
+
+            if (!response.ok) {
+                throw new Error("Primary API failed");
+            }
+
+            const data = await response.json();
+            setTime(new Date(data.datetime));
+            return;
+        } catch (err) {
+            console.error("Primary API failed, trying fallback...", err);
+        }
+
+        const fallbackUrl = `https://timeapi.io/api/Time/current/zone?timeZone=${timezone}`;
+        try {
+            const response = await fetch(fallbackUrl);
+
+            if (!response.ok) {
+                throw new Error("Fallback API failed");
+            }
+
+            const data = await response.json();
+            setTime(new Date(data.dateTime));
+            return;
+        } catch (fallbackErr) {
+            console.error("Both APIs failed, using system time", fallbackErr);
+            setTime(new Date());
+            setError("Using system time due to API failure");
+        }
     };
 
     useEffect(() => {
@@ -47,13 +63,10 @@ export default function Clock() {
 
     return (
         <div className="flex grow items-center justify-center">
-            {error ? (
-                <p>{error}</p>
-            ) : (
-                <p className="SevenSegment text-5xl sm:text-6xl md:text-8xl">
-                    {time ? time.toLocaleTimeString() : ""}
-                </p>
-            )}
+            {error && <p className="text-red-500">{error}</p>}
+            <p className="SevenSegment text-5xl sm:text-6xl md:text-8xl">
+                {time ? time.toLocaleTimeString() : ""}
+            </p>
         </div>
     );
 }
