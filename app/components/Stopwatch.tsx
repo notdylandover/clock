@@ -37,7 +37,6 @@ export default function Stopwatch() {
     };
 
     const handleReset = () => {
-        setRunning(false);
         setElapsed(0);
     };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { addToast } from "@heroui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navigation from "@/app/components/Navigation";
 import Clock from "@/app/components/Clock";
@@ -24,6 +25,14 @@ export default function Content() {
                         setShowNavigation(false);
                     }, 10000);
                     return;
+                }
+
+                if (manualHide && keyEvent.key != "Escape") {
+                    addToast({
+                        hideIcon: true,
+                        description: "Press 'Esc' to show the UI.",
+                        timeout: 3000,
+                    });
                 }
             }
 
