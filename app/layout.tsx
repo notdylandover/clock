@@ -6,10 +6,8 @@ import Providers from "./components/providers";
 import ClientLayout from "./components/layout";
 
 import { metadata } from "./metadata";
-import { viewport } from "./metadata";
 
 export { metadata };
-export { viewport };
 
 export default async function RootLayout({
     children,

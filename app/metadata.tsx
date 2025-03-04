@@ -1,19 +1,15 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 
 const defaultTitle = "Clock";
 const defaultDescription = "It's just a clock.";
 const defaultUrl = "https://clock.dylandover.dev";
-
-export const viewport: Viewport = {
-    themeColor: 'dark',
-};
 
 export const metadata: Metadata = {
     metadataBase: new URL(defaultUrl),
     title: {
         default: defaultTitle,
         template: defaultTitle,
-    } as const,
+    },
     description: defaultDescription,
     openGraph: {
         title: defaultTitle,
@@ -33,5 +29,8 @@ export const metadata: Metadata = {
             "max-image-preview": "large",
             "max-snippet": -1,
         },
+    },
+    icons: {
+        icon: "/favicon.ico",
     },
 };
