@@ -1,9 +1,8 @@
 "use client";
 
 import { Spinner } from "@heroui/react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
-// Helper to get the cookie for clockFontColor.
 const getClockFontColor = (): string => {
     const match = document.cookie.match("(?:^|; )clockFontColor=([^;]*)");
     return match ? decodeURIComponent(match[1]) : "white";
@@ -14,14 +13,18 @@ export default function Clock() {
     const [time, setTime] = useState<Date | null>(null);
     const [error, setError] = useState<string>("");
     const [isLoading, setLoading] = useState<boolean>(true);
-    const [clockColor, setClockColor] = useState<string>(getClockFontColor());
+    const [clockColor, setClockColor] = useState<string>("white");
 
     const colorMapping: Record<string, { base: string; alternate: string }> = {
-        red: { base: "text-red-600", alternate: "text-red-950" },
-        blue: { base: "text-blue-600", alternate: "text-blue-950" },
-        green: { base: "text-green-600", alternate: "text-green-950" },
+        red: { base: "text-red-700", alternate: "text-red-950" },
+        blue: { base: "text-blue-700", alternate: "text-blue-950" },
+        green: { base: "text-green-700", alternate: "text-green-950" },
         white: { base: "text-default-900", alternate: "text-default-50" },
     };
+
+    useEffect(() => {
+        setClockColor(getClockFontColor());
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -31,64 +34,60 @@ export default function Clock() {
         return () => clearInterval(interval);
     }, []);
 
-    const fetchTime = async (sync: boolean = false) => {
-        if (!sync) {
-            setLoading(true);
-            setError("");
-        } else {
-            setError("");
-        }
-
-        const primaryUrl = `https://worldtimeapi.org/api/timezone/${timezone}`;
-
-        try {
-            const response = await fetch(primaryUrl);
-
-            if (!response.ok) {
-                throw new Error("Primary API failed");
-            }
-
-            const data = await response.json();
-            setTime(new Date(data.datetime));
-
-            if (!sync) setLoading(false);
-
-            return;
-        } catch (err) {
-            console.error("Primary API failed, trying fallback...", err);
-        }
-
-        const fallbackUrl = `https://timeapi.io/api/Time/current/zone?timeZone=${timezone}`;
-        try {
-            const response = await fetch(fallbackUrl);
-
-            if (!response.ok) {
-                throw new Error("Fallback API failed");
-            }
-
-            const data = await response.json();
-            setTime(new Date(data.dateTime));
-
-            if (!sync) setLoading(false);
-
-            return;
-        } catch (fallbackErr) {
-            console.error("Both APIs failed, using system time", fallbackErr);
-
-            setTime(new Date());
-
+    const fetchTime = useCallback(
+        async (sync: boolean = false) => {
             if (!sync) {
-                setLoading(false);
-                setError("Using system time due to API failure");
+                setLoading(true);
+                setError("");
             } else {
-                setError("Using system time due to API failure");
+                setError("");
             }
-        }
-    };
+
+            const primaryUrl = `https://worldtimeapi.org/api/timezone/${timezone}`;
+
+            try {
+                const response = await fetch(primaryUrl);
+                if (!response.ok) {
+                    throw new Error("Primary API failed");
+                }
+                const data = await response.json();
+                setTime(new Date(data.datetime));
+                if (!sync) setLoading(false);
+                return;
+            } catch (err) {
+                console.error("Primary API failed, trying fallback...", err);
+            }
+
+            const fallbackUrl = `https://timeapi.io/api/Time/current/zone?timeZone=${timezone}`;
+            try {
+                const response = await fetch(fallbackUrl);
+                if (!response.ok) {
+                    throw new Error("Fallback API failed");
+                }
+                const data = await response.json();
+                setTime(new Date(data.dateTime));
+                if (!sync) setLoading(false);
+                return;
+            } catch (fallbackErr) {
+                console.error(
+                    "Both APIs failed, using system time",
+                    fallbackErr
+                );
+                setTime(new Date());
+                if (!sync) {
+                    setLoading(false);
+                    setError("Using system time due to API failure");
+                } else {
+                    setError("Using system time due to API failure");
+                }
+            }
+        },
+        [timezone]
+    );
 
     useEffect(() => {
         fetchTime();
-    }, [timezone]);
+    }, [timezone, fetchTime]);
 
     useEffect(() => {
         if (time) {
@@ -104,16 +103,14 @@ export default function Clock() {
             fetchTime(true);
         }, 60000);
         return () => clearInterval(syncInterval);
-    }, [timezone]);
+    }, [timezone, fetchTime]);
 
     const renderTime = () => {
         if (!time) return "";
-
         const hours24 = time.getHours();
         const hour12 = hours24 % 12 || 12;
         const minutes = time.getMinutes();
         const seconds = time.getSeconds();
-
         const { base, alternate } =
             colorMapping[clockColor.toLowerCase()] || colorMapping.white;
 
@@ -134,7 +131,6 @@ export default function Clock() {
         if (!time) return null;
         const hours24 = time.getHours();
         const isAM = hours24 < 12;
-
         const { base, alternate } =
             colorMapping[clockColor.toLowerCase()] || colorMapping.white;
 

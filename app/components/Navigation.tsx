@@ -162,6 +162,9 @@ export default function Navigation({
                             <ModalHeader>Settings</ModalHeader>
                             <Divider />
                             <ModalBody className="p-6">
+                                <p className="font-semibold text-sm">
+                                    Clock Color
+                                </p>
                                 <Dropdown>
                                     <DropdownTrigger>
                                         <Button variant="faded">
@@ -174,6 +177,7 @@ export default function Navigation({
                                         aria-label="Font Color"
                                         selectedKeys={selectedFontColor}
                                         selectionMode="single"
+                                        variant="faded"
                                         onSelectionChange={(keys) => {
                                             const selectedKey = Array.from(
                                                 keys

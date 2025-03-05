@@ -1,11 +1,12 @@
-/* eslint-disable react/no-unescaped-entities */
-
 import "./globals.css";
 
 import Providers from "./components/providers";
 import ClientLayout from "./components/layout";
-
 import { metadata } from "./metadata";
+
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export { metadata };
 
@@ -16,13 +17,8 @@ export default async function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <head>
-                <link
-                    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-                    rel="stylesheet"
-                />
-            </head>
-            <body className="antialiased">
+            <head />
+            <body className={`antialiased ${inter.className}`}>
                 <Providers>
                     <ClientLayout>{children}</ClientLayout>
                 </Providers>
