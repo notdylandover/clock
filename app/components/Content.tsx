@@ -30,8 +30,8 @@ export default function Content() {
                 if (manualHide && keyEvent.key != "Escape") {
                     addToast({
                         hideIcon: true,
-                        description: "Press 'Esc' to show the UI.",
-                        timeout: 3000,
+                        description: "Press 'ESC' to show the Navbar again.",
+                        timeout: 1500,
                     });
                 }
             }
@@ -71,7 +71,7 @@ export default function Content() {
     }, [showNavigation]);
 
     return (
-        <div className="flex flex-col h-screen w-screen p-4">
+        <div className="flex flex-col h-screen w-screen">
             <AnimatePresence>
                 {showNavigation && (
                     <motion.div
